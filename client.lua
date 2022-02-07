@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local tasking = false
 local drugStorePed = 0
 local oxyVehicle = 0
@@ -45,11 +46,11 @@ local oxyPeds = {
 }
 
 local carpick = {
-    [1] = "felon",
-    [2] = "kuruma",
-    [3] = "sultan",
-    [4] = "granger",
-    [5] = "tailgater",
+    [1] = "gmt900escalade",
+    [2] = "m3e36",
+    [3] = "fk8",
+    [4] = "tahoe",
+    [5] = "mst",
 }
 
 function CreateOxyVehicle()
@@ -81,7 +82,7 @@ function CreateOxyVehicle()
 	TriggerEvent('vehiclekeys:client:SetOwner', plt)
     while true do
 		Citizen.Wait(1)
-		DrawText3Ds(carspawns[spawnpoint]['coords']["x"], carspawns[spawnpoint]['coords']["y"], carspawns[spawnpoint]['coords']["z"], "Your Delivery Car (Stolen).")
+		DrawText3Ds(carspawns[spawnpoint]['coords']["x"], carspawns[spawnpoint]['coords']["y"], carspawns[spawnpoint]['coords']["z"], "Lieferauto (Gestohlen).")
 		if #(GetEntityCoords(PlayerPedId()) - vector3(carspawns[spawnpoint]['coords']["x"], carspawns[spawnpoint]['coords']["y"], carspawns[spawnpoint]['coords']["z"])) < 8.0 then
 			return
 		end
@@ -221,9 +222,9 @@ function DoDropOff()
 			end
 
 			Citizen.Wait(2000)
-			QBCore.Functions.Notify('The delivery was on point, your GPS will be updated with the next drop off', 'success')
+			QBCore.Functions.Notify('Gute Lieferung, warte auf den nächsten Kunden', 'success')
 		else
-			QBCore.Functions.Notify('The drop-off failed', 'error')
+			QBCore.Functions.Notify('Lieferung fehlsgeschalgen', 'error')
 		end
 	
 		DeleteCreatedPed()
@@ -273,7 +274,7 @@ AddEventHandler("oxydelivery:client", function()
 			pedCreated = true
 			DeleteCreatedPed()
 			CreateOxyPed()
-			QBCore.Functions.Notify('You are close to the drop-off point')
+			QBCore.Functions.Notify('Du bist in der Nähe des Kunden')
 		end
 		toolong = toolong - 1
 		if toolong < 0 then
@@ -282,7 +283,7 @@ AddEventHandler("oxydelivery:client", function()
 			SetEntityAsNoLongerNeeded(oxyVehicle)
 			tasking = false
 			OxyRun = false
-			QBCore.Functions.Notify('You took too long', 'error')
+			QBCore.Functions.Notify('Du hast zu lange gebraucht', 'error')
 		end
 		if dstcheck < 2.0 and pedCreated then
 
@@ -313,7 +314,7 @@ Citizen.CreateThread(function()
 
 		if dropOff6 < 1.6 and not OxyRun then
 
-			DrawText3Ds(pillWorker['coords']["x"],pillWorker['coords']["y"],pillWorker['coords']["z"], "[E] $6,500 - Delivery Job (Payment Cash + Oxy)") 
+			DrawText3Ds(pillWorker['coords']["x"],pillWorker['coords']["y"],pillWorker['coords']["z"], "[E] $2,000 - Lieferung") 
 			if IsControlJustReleased(0,38) then
 				TriggerServerEvent("oxydelivery:server")
 				Citizen.Wait(1000)
@@ -330,7 +331,7 @@ Citizen.CreateThread(function()
 			if not DoesEntityExist(oxyVehicle) or GetVehicleEngineHealth(oxyVehicle) < 200.0 or GetVehicleBodyHealth(oxyVehicle) < 200.0 then
 				OxyRun = false
 				tasking = false
-				QBCore.Functions.Notify("The dealer isn't giving you anymore locations due to the state of his car", "error")
+				QBCore.Functions.Notify("Der Dealer gibt dir kein Oxy mehr wegen dem Status des Autos", "error")
 			else
 				if tasking then
 					Citizen.Wait(30000)
@@ -356,5 +357,5 @@ AddEventHandler("oxydelivery:startDealing", function()
 	CreateOxyVehicle()
 	OxyRun = true
 	firstdeal = true
-	QBCore.Functions.Notify('A car has been provided. Your GPS will be updated with locations soon', 'success')
+	QBCore.Functions.Notify('Ein Auto wurde zur Verfügung gestellt, GPS Daten kommen bald', 'success')
 end)
